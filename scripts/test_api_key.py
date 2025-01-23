@@ -1,7 +1,13 @@
 import requests
+from dotenv import load_dotenv
+import os
 
-# Replace with your API key
-api_key = '850ab9bf60af46e77034a8f578e1c8eb'
+# Load environment variables from .env file
+load_dotenv()
+
+# Get API key from environment variable
+api_key = os.getenv('API_KEY')
+
 lat = 40.4842  # Latitude for Bloomington
 lon = -88.9937  # Longitude for Bloomington
 url = f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=minutely&units=metric&appid={api_key}'
