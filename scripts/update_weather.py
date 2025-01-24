@@ -15,7 +15,7 @@ cities = [
     {'name': 'Marquette', 'lat': 46.5476, 'lon': -87.3956},
     {'name': 'Baraboo', 'lat': 43.4719, 'lon': -89.7446},
     {'name': 'Zurich', 'lat': 47.3769, 'lon': 8.5417},
-    {'name': 'Norilsk', 'lat': 69.3558, 'lon': 88.1893}
+    {'name': 'Norilsk', 'lat': 69.3558, 'lon': 88.1893},
     {'name': 'Nashville', 'lat': 36.1627, 'lon': -86.7816},
 ]
 
