@@ -26,6 +26,10 @@ db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'weather_dat
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
+
+# Enable foreign key support
+cursor.execute('PRAGMA foreign_keys = ON')
+
 # Function to add column if it doesn't exist
 def add_column_if_not_exists(cursor, table_name, column_name, column_type):
     cursor.execute(f"PRAGMA table_info({table_name})")
@@ -56,7 +60,7 @@ cursor.execute('''
 
 # Create a new table for weather summary if it doesn't exist
 cursor.execute('''
-    CREATE TABLE IF NOT EXISTS weather_summary (
+    CREATE TABLE IF NOT EXISTS weather_temperatures (
         id INTEGER PRIMARY KEY,
         weather_id INTEGER,
         city TEXT,
@@ -69,6 +73,25 @@ cursor.execute('''
     )
 ''')
 
+# Create a new table for weather summary if it doesn't exist
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS weather_summary (
+        id INTEGER PRIMARY KEY,
+        weather_id INTEGER,
+        city TEXT,
+        summary TEXT,
+        timestamp DATETIME,
+        FOREIGN KEY (weather_id) REFERENCES weather(id)
+    )
+''')
+
+# Function to generate a detailed summary
+def generate_summary(weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity):
+    return (f"The forecast for today is {weather_description}. "
+            f"The temperature is {temperature_c}°C ({temperature_f}°F), "
+            f"feels like {feels_like_c}°C ({feels_like_f}°F). "
+            f"Wind speed is {wind_speed} m/s with a humidity of {humidity}%.")
+
 
 for city in cities:
     city_name = city['name']
@@ -79,6 +102,7 @@ for city in cities:
     if response.status_code == 200:
         data = response.json()
         current_weather = data['current']
+        daily_weather = data['daily'][0]
         weather_description = current_weather['weather'][0]['description']
         temperature_c = current_weather['temp']
         temperature_f = round((temperature_c * 9/5) + 32, 2)
@@ -86,6 +110,7 @@ for city in cities:
         feels_like_f = round((feels_like_c * 9/5) + 32, 2)
         wind_speed = current_weather['wind_speed']
         humidity = current_weather['humidity']
+        summary = generate_summary(weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity)
 
         # Convert UTC timestamp to local time
         utc_timestamp = datetime.utcfromtimestamp(current_weather['dt'])
@@ -102,9 +127,14 @@ for city in cities:
         weather_id = cursor.lastrowid
         # Insert data into the weather_summary table
         cursor.execute('''
-            INSERT INTO weather_summary (weather_id, city, temperature, temperature_f, feels_like, feels_like_f, timestamp)
+            INSERT INTO weather_temperatures (weather_id, city, temperature, temperature_f, feels_like, feels_like_f, timestamp)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (weather_id, city_name, temperature_c, temperature_f, feels_like_c, feels_like_f, utc_timestamp))
+        
+        cursor.execute('''
+            INSERT INTO weather_summary (weather_id, city, summary, timestamp)
+            VALUES (?, ?, ?, ?)
+        ''', (weather_id, city_name, summary, utc_timestamp))
 
         print(f"Data for {city_name} inserted successfully.")
     else:
