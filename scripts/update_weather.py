@@ -86,11 +86,12 @@ cursor.execute('''
 ''')
 
 # Function to generate a detailed summary
-def generate_summary(weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity):
+def generate_summary(weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity, temp_min_c, temp_max_c, temp_min_f, temp_max_f):
     return (f"The forecast for today is {weather_description}. "
             f"The temperature is {temperature_c}°C ({temperature_f}°F), "
             f"feels like {feels_like_c}°C ({feels_like_f}°F). "
-            f"Wind speed is {wind_speed} m/s with a humidity of {humidity}%.")
+            f"Wind speed is {wind_speed} m/s with a humidity of {humidity}%. "
+            f"The minimum temperature is {temp_min_c}°C ({temp_min_f}°F) and the maximum temperature is {temp_max_c}°C ({temp_max_f}°F).")
 
 
 for city in cities:
@@ -110,7 +111,12 @@ for city in cities:
         feels_like_f = round((feels_like_c * 9/5) + 32, 2)
         wind_speed = current_weather['wind_speed']
         humidity = current_weather['humidity']
-        summary = generate_summary(weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity)
+        temp_min_c = daily_weather['temp']['min']
+        temp_max_c = daily_weather['temp']['max']
+        temp_min_f = round((temp_min_c * 9/5) + 32, 2)
+        temp_max_f = round((temp_max_c * 9/5) + 32, 2)
+        summary = generate_summary(weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, 
+                                   wind_speed, humidity, temp_min_c, temp_max_c, temp_min_f, temp_max_f)
 
         # Convert UTC timestamp to local time
         utc_timestamp = datetime.utcfromtimestamp(current_weather['dt'])
