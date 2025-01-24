@@ -2,6 +2,8 @@ import requests
 import sqlite3
 from dotenv import load_dotenv
 import os
+from datetime import datetime
+import pytz
 
 # Load environment variables from .env file
 load_dotenv()
@@ -11,18 +13,26 @@ api_key = os.getenv('API_KEY')
 
 # List of cities with their latitude and longitude
 cities = [
-    {'name': 'Bloomington', 'lat': 40.4842, 'lon': -88.9937},
-    {'name': 'Marquette', 'lat': 46.5476, 'lon': -87.3956},
-    {'name': 'Baraboo', 'lat': 43.4719, 'lon': -89.7446},
-    {'name': 'Zurich', 'lat': 47.3769, 'lon': 8.5417},
-    {'name': 'Norilsk', 'lat': 69.3558, 'lon': 88.1893},
-    {'name': 'Nashville', 'lat': 36.1627, 'lon': -86.7816},
+    {'name': 'Bloomington', 'lat': 40.4842, 'lon': -88.9937, 'timezone': 'America/Chicago'},
+    {'name': 'Marquette', 'lat': 46.5476, 'lon': -87.3956, 'timezone': 'America/Detroit'},
+    {'name': 'Baraboo', 'lat': 43.4719, 'lon': -89.7446, 'timezone': 'America/Chicago'},
+    {'name': 'Zurich', 'lat': 47.3769, 'lon': 8.5417, 'timezone': 'Europe/Zurich'},
+    {'name': 'Norilsk', 'lat': 69.3558, 'lon': 88.1893, 'timezone': 'Asia/Krasnoyarsk'},
+    {'name': 'Nashville', 'lat': 36.1627, 'lon': -86.7816, 'timezone': 'America/Chicago'}
 ]
 
 # Connect to SQLite database (or create it if it doesn't exist)
 db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'weather_data.db')
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
+
+# Alter table to add new columns if they don't exist
+cursor.execute('''
+    ALTER TABLE weather ADD COLUMN timestamp_utc DATETIME
+''')
+cursor.execute('''
+    ALTER TABLE weather ADD COLUMN timestamp_local DATETIME
+''')
 
 # Create table if it doesn't exist
 cursor.execute('''
@@ -32,12 +42,14 @@ cursor.execute('''
         weather TEXT,
         temperature REAL,
         temperature_f REAL,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        timestamp_utc DATETIME,
+        timestamp_local DATETIME
     )
 ''')
 
 for city in cities:
     city_name = city['name']
+    city_timezone = city['timezone']
     url = f'https://api.openweathermap.org/data/3.0/onecall?lat={city["lat"]}&lon={city["lon"]}&exclude=minutely&units=metric&appid={api_key}'
     response = requests.get(url)
 
@@ -48,11 +60,16 @@ for city in cities:
         temperature_c = current_weather['temp']
         temperature_f = round((temperature_c * 9/5) + 32, 2)
 
+        # Convert UTC timestamp to local time
+        utc_timestamp = datetime.utcfromtimestamp(current_weather['dt'])
+        local_timezone = pytz.timezone(city_timezone)
+        local_timestamp = utc_timestamp.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+
         # Insert data into table
         cursor.execute('''
-            INSERT INTO weather (city, weather, temperature, temperature_f)
-            VALUES (?, ?, ?, ?)
-        ''', (city_name, weather_description, temperature_c, temperature_f))
+            INSERT INTO weather (city, weather, temperature, temperature_f, timestamp_utc, timestamp_local)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (city_name, weather_description, temperature_c, temperature_f, utc_timestamp, local_timestamp))
 
         print(f"Data for {city_name} inserted successfully.")
     else:
