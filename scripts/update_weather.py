@@ -26,12 +26,9 @@ db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'weather_dat
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Drop the existing weather table if it exists
-cursor.execute('DROP TABLE IF EXISTS weather')
-
-# Create table with correct schema
+# Create table with correct schema if it doesn't exist
 cursor.execute('''
-    CREATE TABLE weather (
+    CREATE TABLE IF NOT EXISTS weather (
         id INTEGER PRIMARY KEY,
         city TEXT,
         weather TEXT,
