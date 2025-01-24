@@ -26,6 +26,17 @@ db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'weather_dat
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
+# Function to add column if it doesn't exist
+def add_column_if_not_exists(cursor, table_name, column_name, column_type):
+    cursor.execute(f"PRAGMA table_info({table_name})")
+    columns = [info[1] for info in cursor.fetchall()]
+    if column_name not in columns:
+        cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}")
+
+# Example of how to add a new column if it doesn't exist
+# Uncomment and modify the following line to add a new column
+# add_column_if_not_exists(cursor, 'weather', 'new_column_name', 'new_column_data_type')
+
 # Create table with correct schema if it doesn't exist
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS weather (
@@ -34,6 +45,10 @@ cursor.execute('''
         weather TEXT,
         temperature REAL,
         temperature_f REAL,
+        feels_like REAL,
+        feels_like_f REAL,
+        wind_speed REAL,
+        humidity REAL,
         timestamp DATETIME,
         timestamp_local DATETIME
     )
@@ -51,6 +66,10 @@ for city in cities:
         weather_description = current_weather['weather'][0]['description']
         temperature_c = current_weather['temp']
         temperature_f = round((temperature_c * 9/5) + 32, 2)
+        feels_like_c = current_weather['feels_like']
+        feels_like_f = round((feels_like_c * 9/5) + 32, 2)
+        wind_speed = current_weather['wind_speed']
+        humidity = current_weather['humidity']
 
         # Convert UTC timestamp to local time
         utc_timestamp = datetime.utcfromtimestamp(current_weather['dt'])
@@ -59,9 +78,9 @@ for city in cities:
 
         # Insert data into table
         cursor.execute('''
-            INSERT INTO weather (city, weather, temperature, temperature_f, timestamp, timestamp_local)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (city_name, weather_description, temperature_c, temperature_f, utc_timestamp, local_timestamp))
+            INSERT INTO weather (city, weather, temperature, temperature_f, feels_like, feels_like_f, wind_speed, humidity, timestamp, timestamp_local)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (city_name, weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity, utc_timestamp, local_timestamp))
 
         print(f"Data for {city_name} inserted successfully.")
     else:
