@@ -34,7 +34,7 @@ def add_column_if_not_exists(cursor, table_name, column_name, column_type):
         cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}")
 
 # Example of how to add a new column if it doesn't exist
-# Uncomment and modify the following line to add a new column
+# Uncomment and modify the following line to add a new column - cursor, table name, new column, new column data type
 # add_column_if_not_exists(cursor, 'weather', 'new_column_name', 'new_column_data_type')
 
 # Create table with correct schema if it doesn't exist
@@ -53,6 +53,22 @@ cursor.execute('''
         timestamp_local DATETIME
     )
 ''')
+
+# Create a new table for weather summary if it doesn't exist
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS weather_summary (
+        id INTEGER PRIMARY KEY,
+        weather_id INTEGER,
+        city TEXT,
+        temperature REAL,
+        temperature_f REAL,
+        feels_like REAL,
+        feels_like_f REAL,
+        timestamp DATETIME,
+        FOREIGN KEY (weather_id) REFERENCES weather(id)
+    )
+''')
+
 
 for city in cities:
     city_name = city['name']
@@ -81,6 +97,14 @@ for city in cities:
             INSERT INTO weather (city, weather, temperature, temperature_f, feels_like, feels_like_f, wind_speed, humidity, timestamp, timestamp_local)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (city_name, weather_description, temperature_c, temperature_f, feels_like_c, feels_like_f, wind_speed, humidity, utc_timestamp, local_timestamp))
+
+        # Get the last inserted id from the weather table
+        weather_id = cursor.lastrowid
+        # Insert data into the weather_summary table
+        cursor.execute('''
+            INSERT INTO weather_summary (weather_id, city, temperature, temperature_f, feels_like, feels_like_f, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (weather_id, city_name, temperature_c, temperature_f, feels_like_c, feels_like_f, utc_timestamp))
 
         print(f"Data for {city_name} inserted successfully.")
     else:
