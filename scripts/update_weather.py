@@ -26,23 +26,18 @@ db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'weather_dat
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Alter table to add new columns if they don't exist
-cursor.execute('''
-    ALTER TABLE weather ADD COLUMN timestamp_utc DATETIME
-''')
-cursor.execute('''
-    ALTER TABLE weather ADD COLUMN timestamp_local DATETIME
-''')
+# Drop the existing weather table if it exists
+cursor.execute('DROP TABLE IF EXISTS weather')
 
-# Create table if it doesn't exist
+# Create table with correct schema
 cursor.execute('''
-    CREATE TABLE IF NOT EXISTS weather (
+    CREATE TABLE weather (
         id INTEGER PRIMARY KEY,
         city TEXT,
         weather TEXT,
         temperature REAL,
         temperature_f REAL,
-        timestamp_utc DATETIME,
+        timestamp DATETIME,
         timestamp_local DATETIME
     )
 ''')
@@ -67,7 +62,7 @@ for city in cities:
 
         # Insert data into table
         cursor.execute('''
-            INSERT INTO weather (city, weather, temperature, temperature_f, timestamp_utc, timestamp_local)
+            INSERT INTO weather (city, weather, temperature, temperature_f, timestamp, timestamp_local)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', (city_name, weather_description, temperature_c, temperature_f, utc_timestamp, local_timestamp))
 
