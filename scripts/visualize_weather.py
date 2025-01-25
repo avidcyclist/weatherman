@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
+#Darkmode, the white was hurting my eyes
+plt.style.use('dark_background')
+
 # Connect to SQLite database
 db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'weather_data.db')
 conn = sqlite3.connect(db_path)
