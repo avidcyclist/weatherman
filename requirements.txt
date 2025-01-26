@@ -1,5 +1,9 @@
-sqlite3
+Flask
+schedule
+requests
 pandas
-numpy
-sqlalchemy
-dotenv
+matplotlib
+python-dotenv
+twilio
+pytz
+sqlite3
