@@ -40,9 +40,9 @@ def get_weather_data(city):
         daily_weather = weather_data['daily'][0]
         weather_desc = current_weather['weather'][0]['description']
         temp_c = current_weather['temp']
-        temp_f = round((temp_c * 9/5) + 32, 2)
+        temp_f = round((temp_c * 9/5) + 32, 1)
         feels_like_c = current_weather['feels_like']
-        feels_like_f = round((feels_like_c * 9/5) + 32, 2)
+        feels_like_f = round((feels_like_c * 9/5) + 32, 1)
         wind_speed = current_weather['wind_speed']
         humidity = current_weather['humidity']
         temp_min_c = daily_weather['temp']['min']
