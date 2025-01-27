@@ -19,6 +19,7 @@ cities = [
     {'name': 'Zurich', 'lat': 47.3769, 'lon': 8.5417, 'timezone': 'Europe/Zurich'},
     {'name': 'Norilsk', 'lat': 69.3558, 'lon': 88.1893, 'timezone': 'Asia/Krasnoyarsk'},
     {'name': 'Nashville', 'lat': 36.1627, 'lon': -86.7816, 'timezone': 'America/Chicago'}
+    #{'name': 'Your City', 'lat': 36.1627, 'lon': -86.7816, 'timezone': 'City Timezone'}
 ]
 
 # Connect to SQLite database (or create it if it doesn't exist)
