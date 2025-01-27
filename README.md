@@ -16,16 +16,26 @@ This project fetches weather data from the OpenWeatherMap API and stores it in a
 └───data_pipeline_practice
     │   .env
     │   .gitignore
+    │   Procfile
     │   README.md
     │   requirements.txt
     │
     ├───data
     │       sample_data.db
+    │       weather.csv
+    │       weather_data.xlsx
+    │       weather_summary.csv
+    │       weather_temperatures.csv
     │
     ├───database
     │       weather_data.db
     │
+    ├───flask_app
+    │       time_and_temp.py
+    │
     ├───images
+    │       1_24_2025_bar_chart.png
+    │       1_24_2025_trend.png
     │       Figure_1.png
     │
     ├───scripts
@@ -33,12 +43,16 @@ This project fetches weather data from the OpenWeatherMap API and stores it in a
     │       check_weather_summary.py
     │       check_weather_temperature.py
     │       create_tables.py
+    │       export_weather_data.py
+    │       scheduler.py
     │       table_name_change.py
     │       test_api_key.py
     │       update_weather.py
     │       visualize_weather.py
     │
     ├───sql_scripts
+    │       sql_scripts.md
+    │
     └───src
         │   main.py
         │
