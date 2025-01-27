@@ -70,7 +70,7 @@ def voice():
         if weather:
             city_name, weather_desc, temp_c, temp_f, feels_like_c, feels_like_f, wind_speed, humidity, timestamp, timestamp_local = weather
             local_time = datetime.now(pytz.timezone('America/Chicago')).strftime('%I:%M %p')
-            response_text = (f"Hello, the current time is {local_time}. "
+            response_text = (f"Hello, the current time in Bloomington is {local_time}. "
                              f"The current weather in {city_name} is {weather_desc}. "
                              f"The temperature is {temp_f} degrees Fahrenheit, "
                              f"feels like {feels_like_f} degrees. "

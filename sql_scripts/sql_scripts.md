@@ -81,3 +81,20 @@ SELECT
     column1,
     RANK() OVER (PARTITION BY column2 ORDER BY column3 DESC) AS rank
 FROM table_name;
+
+### Average Temperature
+
+
+SELECT
+    city,
+    AVG(temperature_f) AS average_temperature
+FROM weather_temperatures
+GROUP BY city;
+
+### Maximum Temperature
+
+SELECT
+    city,
+    MAX(temperature_f) AS max_temperature
+FROM weather_temperatures
+GROUP BY city;
