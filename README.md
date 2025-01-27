@@ -107,6 +107,30 @@ This script tests the validity of the OpenWeatherMap API key.
 
 This script visualizes the weather data stored in the database using matplotlib.
 
+## Twilio Integration for Weather Updates
+
+### But wait! There is more!
+
+This project also includes a Flask application that integrates with Twilio to provide weather updates via phone calls. When a call is received, the application fetches the current weather data and responds with a voice message containing the weather information.
+
+### Setting Up Twilio Integration
+
+1. **Environment Variables**: Ensure the following environment variables are set in your `.env` file or Heroku config vars:
+    - `API_KEY`: Your OpenWeatherMap API key
+    - `TWILIO_ACCOUNT_SID`: Your Twilio account SID
+    - `TWILIO_AUTH_TOKEN`: Your Twilio auth token
+
+2. **Deploying to Heroku**: Deploy the Flask application to Heroku and set up the Twilio webhook to point to your Heroku app's `/voice` endpoint.
+
+### Example Usage
+
+1. **Make a Call**: Call your Twilio phone number.
+2. **Receive Weather Update**: The Flask application will fetch the current weather data and respond with a voice message containing the weather information.
+
+### Flask Application Code
+
+The Flask application code is located in `flask_app/time_and_temp.py`.
+
 ### Summary
 
 - **Project Structure**: The README now includes a detailed project structure.
