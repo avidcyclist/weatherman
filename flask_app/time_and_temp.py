@@ -80,7 +80,7 @@ def voice():
             response_text = "Sorry, I couldn't retrieve the weather data at this time."
 
         response = VoiceResponse()
-        response.say(response_text, voice='Polly.Kendra')
+        response.say(response_text)
         logging.debug(f"Response text: {response_text}")
         response.pause(length=5)  # Add a 5-second pause at the end
         return Response(str(response), mimetype='text/xml')
