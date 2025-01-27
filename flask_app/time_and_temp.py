@@ -74,7 +74,8 @@ def voice():
                              f"The current weather in {city_name} is {weather_desc}. "
                              f"The temperature is {temp_f} degrees Fahrenheit, "
                              f"feels like {feels_like_f} degrees. "
-                             f"Wind speed is {wind_speed} meters per second with a humidity of {humidity} percent.")
+                             f"Wind speed is {wind_speed} meters per second with a humidity of {humidity} percent."
+                             f"Goodbye.")
         else:
             response_text = "Sorry, I couldn't retrieve the weather data at this time."
 
