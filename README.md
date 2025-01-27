@@ -138,7 +138,7 @@ This project also includes a Flask application that integrates with Twilio to pr
 
 ### Example Usage
 
-1. **Make a Call**: Call your Twilio phone number.
+1. **Make a Call**: Call your Twilio phone number. 217-829-2566 - Bloomington Time and Temp
 2. **Receive Weather Update**: The Flask application will fetch the current weather data and respond with a voice message containing the weather information.
 
 ### Flask Application Code
