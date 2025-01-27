@@ -87,6 +87,7 @@ def voice():
     except Exception as e:
         logging.error(f"Error in /voice endpoint: {e}", exc_info=True)
         return Response("Internal Server Error", status=500)
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
