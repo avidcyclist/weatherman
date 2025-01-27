@@ -88,6 +88,6 @@ def voice():
         logging.error(f"Error in /voice endpoint: {e}", exc_info=True)
         return Response("Internal Server Error", status=500)
     
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
