@@ -1,1 +1,1 @@
-web: python flask_app/time_and_temp.py
+web: python data_pipeline_practice/flask_app/time_and_temp.py
