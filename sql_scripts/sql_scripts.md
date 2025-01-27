@@ -44,8 +44,8 @@ SELECT
     id,
     city,
     timestamp,
-    temperature,
-    RANK() OVER (PARTITION BY city ORDER BY temperature DESC) AS temperature_rank
+    temperature_f,
+    RANK() OVER (PARTITION BY city ORDER BY temperature_f DESC) AS temperature_rank
 FROM weather_temperatures
 ORDER BY timestamp;
 
