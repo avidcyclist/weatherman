@@ -43,7 +43,8 @@ def get_weather_data(city):
         temp_f = round((temp_c * 9/5) + 32, 1)
         feels_like_c = current_weather['feels_like']
         feels_like_f = round((feels_like_c * 9/5) + 32, 1)
-        wind_speed = current_weather['wind_speed']
+        wind_speed_mps = current_weather['wind_speed']
+        wind_speed_mph = round(wind_speed_mps * 2.23694, 1)
         humidity = current_weather['humidity']
         temp_min_c = daily_weather['temp']['min']
         temp_max_c = daily_weather['temp']['max']
@@ -55,7 +56,7 @@ def get_weather_data(city):
         local_timezone = pytz.timezone(city['timezone'])
         local_timestamp = utc_timestamp.replace(tzinfo=pytz.utc).astimezone(local_timezone)
 
-        weather = (city['name'], weather_desc, temp_c, temp_f, feels_like_c, feels_like_f, wind_speed, humidity, utc_timestamp, local_timestamp)
+        weather = (city['name'], weather_desc, temp_c, temp_f, feels_like_c, feels_like_f, wind_speed_mph, humidity, utc_timestamp, local_timestamp)
         logging.debug(f"Weather data fetched for {city['name']}: {weather}")
         return weather
     except Exception as e:
@@ -68,13 +69,13 @@ def voice():
         logging.debug("Received a call request")
         weather = get_weather_data(city)
         if weather:
-            city_name, weather_desc, temp_c, temp_f, feels_like_c, feels_like_f, wind_speed, humidity, timestamp, timestamp_local = weather
+            city_name, weather_desc, temp_c, temp_f, feels_like_c, feels_like_f, wind_speed_mph, humidity, timestamp, timestamp_local = weather
             local_time = datetime.now(pytz.timezone('America/Chicago')).strftime('%I:%M %p')
             response_text = (f"Hello, the current time in Bloomington is {local_time}. "
                              f"The current weather in {city_name} is {weather_desc}. "
                              f"The temperature is {temp_f} degrees Fahrenheit, "
                              f"feels like {feels_like_f} degrees. "
-                             f"Wind speed is {wind_speed} meters per second with a humidity of {humidity} percent. "
+                             f"Wind speed is {wind_speed_mph} miles per hour with a humidity of {humidity} percent. "
                              f"Goodbye. ")
         else:
             response_text = "Sorry, I couldn't retrieve the weather data at this time."
